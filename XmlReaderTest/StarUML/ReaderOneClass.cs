@@ -7,13 +7,13 @@ using Xunit;
 
 namespace XmlReaderTest
 {
-    public class ReaderStarUML
+    public class ReaderOneClass
     {
         public IXMIReader GetReaderStarUML_LoadedWith_1Classes()
         {
             var reader = new XMIReaderStarUML();
             string workingDirectory = Path.GetFullPath(@"..\..\..\");
-            string file = "xmi/OnlyClassA.xmi";
+            string file = "xmi/one-class.xmi";
             string path = Path.Combine(workingDirectory + file);
             XElement doc = XElement.Load($"{path}");
             reader.LoadXmi(doc);
