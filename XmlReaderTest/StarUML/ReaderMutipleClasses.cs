@@ -6,7 +6,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Xunit;
 
-namespace XmlReaderTest
+namespace XmlReaderTest.StarUML
 {
     public class ReaderMutipleClasses
     {
