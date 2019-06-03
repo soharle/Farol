@@ -41,15 +41,16 @@ namespace XmlReaderTest.StarUML
             Class ClassA = model.Classes.Single(c => c.Name == "Aa");
             Assert.Contains(ClassA, ClassB.ItDepends);
         }
-
+        [Fact]
         public void MustRead_ClassAa_Release_Ba()
         {
             IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
             Model model = reader.GetModel();
             Class ClassB = model.Classes.Single(c => c.Name == "Ba");
             Class ClassA = model.Classes.Single(c => c.Name == "Aa");
-            Assert.Contains(ClassA, ClassA.Releases);
+            Assert.Contains(ClassB, ClassA.Releases);
         }
+        [Fact]
         public void MustRead_ClassBa_Release_Aa()
         {
             IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
