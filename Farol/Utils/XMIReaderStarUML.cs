@@ -22,6 +22,48 @@ namespace Farol.Utils
             LoadModel();
             LoadClasses();
             LoadAssociations();
+            LoadGeneralizations();
+            LoadDependency();
+        }
+
+        private void LoadDependency()
+        {
+            var dependency = from item in _doc.Descendants("ownedMember")
+                             where item.Attribute(_xmi + "type").Value == "uml:Dependency"
+                             select item;
+
+            foreach(var d in dependency)
+            {
+                var client = d.Attribute("client").Value;
+                var supplier = d.Attribute("supplier").Value;
+
+                var classClient = _model.Classes.Single(x => x.Id == client);
+                var classSupplier = _model.Classes.Single(x => x.Id == supplier);
+
+                classClient.ItDepends.Add(classSupplier);
+                classSupplier.Releases.Add(classClient);
+
+            }
+        }
+
+        private void LoadGeneralizations()
+        {
+            var generalization = from item in _doc.Descendants("generalization")
+                                 where item.Attribute(_xmi + "type").Value == "uml:Generalization"
+                                 select item;
+
+            foreach(var g in generalization)
+            {
+                var specific = g.Attribute("specific").Value;
+                var general = g.Attribute("general").Value;
+
+                var classSpecific = _model.Classes.Single(x => x.Id == specific);
+                var classGeneral = _model.Classes.Single(x => x.Id == general);
+
+                classSpecific.ItDepends.Add(classGeneral);
+                classGeneral.Releases.Add(classSpecific);
+            }
+
         }
 
         private void LoadAssociations()
