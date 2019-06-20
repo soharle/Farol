@@ -69,6 +69,16 @@ namespace XmlReaderTest.StarUML
             Assert.Contains(ClassB, ClassA.ItDepends);
         }
         [Fact]
+        public void MustRead_ClassAd_NotDepends_Bd()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Ad");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bd");
+            Assert.DoesNotContain(ClassA, ClassB.ItDepends);
+        }
+
+        [Fact]
         public void MustRead_ClassBd_Releases_Ad()
         {
             IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
@@ -88,6 +98,46 @@ namespace XmlReaderTest.StarUML
             Assert.Contains(ClassB, ClassA.ItDepends);
         }
         [Fact]
+        public void MustRead_ClassAag_Depends_Bag()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Aag");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bag");
+            Assert.Contains(ClassB, ClassA.ItDepends);
+
+        }
+        [Fact]
+        public void MustRead_ClassBag_Releases_Aag()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Aag");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bag");
+            Assert.Contains(ClassA, ClassB.Releases);
+
+        }
+        [Fact]
+        public void MustRead_ClassBc_Depends_Ac()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Ac");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bc");
+            Assert.Contains(ClassA, ClassB.ItDepends);
+
+        }
+        [Fact]
+        public void MustRead_ClassAc_Releases_Bc()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Ac");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bc");
+            Assert.Contains(ClassB, ClassA.Releases);
+
+        }
+        [Fact]
         public void MustRead_ClassBg_Releases_Ag()
         {
             IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
@@ -96,6 +146,25 @@ namespace XmlReaderTest.StarUML
             Class ClassB = model.Classes.Single(c => c.Name == "Bg");
             Assert.Contains(ClassA, ClassB.Releases);
 
+        }
+        [Fact]
+        public void MustRead_ClassAi_Depends_Bi()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Ai");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bi");
+            Assert.Contains(ClassB, ClassA.ItDepends);
+        }
+
+        [Fact]
+        public void MustRead_ClassBi_Releases_Ai()
+        {
+            IXMIReader reader = GetReaderStarUML_LoadedWith_RelationshipsBasic();
+            Model model = reader.GetModel();
+            Class ClassA = model.Classes.Single(c => c.Name == "Ai");
+            Class ClassB = model.Classes.Single(c => c.Name == "Bi");
+            Assert.Contains(ClassA, ClassB.Releases);
         }
 
     }

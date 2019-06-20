@@ -24,6 +24,7 @@ namespace Farol.Utils
             LoadAssociations();
             LoadGeneralizations();
             LoadDependency();
+            LoadInterfaces();
         }
 
         private void LoadDependency()
@@ -32,7 +33,7 @@ namespace Farol.Utils
                              where item.Attribute(_xmi + "type").Value == "uml:Dependency"
                              select item;
 
-            foreach(var d in dependency)
+            foreach (var d in dependency)
             {
                 var client = d.Attribute("client").Value;
                 var supplier = d.Attribute("supplier").Value;
@@ -46,13 +47,32 @@ namespace Farol.Utils
             }
         }
 
+        private void LoadInterfaces()
+        {
+            var interfaces = from item in _doc.Descendants("interfaceRealization")
+                             where item.Attribute(_xmi + "type").Value == "uml:InterfaceRealization"
+                             select item;
+            foreach(var i in interfaces)
+            {
+                var implementing = i.Attribute("implementingClassifier").Value;
+                var contract = i.Attribute("contract").Value;
+
+                var classImplementing = _model.Classes.Single(x => x.Id == implementing);
+                var classContract = _model.Classes.Single(x => x.Id == contract);
+
+                classImplementing.ItDepends.Add(classContract);
+                classContract.Releases.Add(classImplementing);
+            }
+
+        }
+
         private void LoadGeneralizations()
         {
             var generalization = from item in _doc.Descendants("generalization")
                                  where item.Attribute(_xmi + "type").Value == "uml:Generalization"
                                  select item;
 
-            foreach(var g in generalization)
+            foreach (var g in generalization)
             {
                 var specific = g.Attribute("specific").Value;
                 var general = g.Attribute("general").Value;
@@ -68,29 +88,46 @@ namespace Farol.Utils
 
         private void LoadAssociations()
         {
-            foreach (var c in _model.Classes)
+            var associations = from item in _doc.Descendants("ownedMember")
+                               where item.Attribute(_xmi + "type").Value == "uml:Association"
+                               select item;
+
+            foreach (var a in associations)
             {
-                var ids = from item in _doc.Descendants("ownedMember")
-                          where item.Parent.Attribute(_xmi + "id").Value == c.Id &&
-                          item.Attribute(_xmi + "type").Value == "uml:Association"
-                          select item.Elements("ownedEnd").ToList()[1].Attribute("type").Value;
+                var classId = a.Parent.Attribute(_xmi + "id").Value;
+                string typeAssociation = a.Descendants("ownedEnd").First().Attribute("aggregation").Value;
+                string idDependent = a.Descendants("ownedEnd").ToList()[1].Attribute("type").Value;
 
-                foreach (var id in ids)
+                if (typeAssociation == "none") //Association
                 {
-                    var classesWithAssociationWithC = _model.Classes.Where(x => x.Id == id);
+                    var owner = _model.Classes.Single(x => x.Id == classId);
+                    var dependent = _model.Classes.Single(x => x.Id == idDependent);
 
-                    c.ItDepends.AddRange(classesWithAssociationWithC);
-                    c.Releases.AddRange(classesWithAssociationWithC);
+                    owner.Releases.Add(dependent);
+                    owner.ItDepends.Add(dependent);
+                    dependent.Releases.Add(owner);
+                    dependent.ItDepends.Add(owner);
+                }
+                else if (typeAssociation == "shared") //Agreggation
+                {
+                    var owner = _model.Classes.Single(x => x.Id == classId);
+                    var dependent = _model.Classes.Single(x => x.Id == idDependent);
 
-                    foreach (var classeAssociation in classesWithAssociationWithC)
-                    {
-                        classeAssociation.Releases.Add(c);
-                        classeAssociation.ItDepends.Add(c);
-                    }
+                    owner.ItDepends.Add(dependent);
+                    dependent.Releases.Add(owner);
+                }
+                else if (typeAssociation == "composite") //Compositions
+                {
+                    var owner = _model.Classes.Single(x => x.Id == classId);
+                    var dependent = _model.Classes.Single(x => x.Id == idDependent);
 
+                    owner.Releases.Add(dependent);
+                    dependent.ItDepends.Add(owner);
                 }
             }
+
         }
+
 
         private void LoadModel()
         {
@@ -101,7 +138,8 @@ namespace Farol.Utils
         private void LoadClasses()
         {
             var classes = from item in _doc.Descendants("packagedElement")
-                          where item.Attribute(_xmi + "type").Value == "uml:Class"
+                          where item.Attribute(_xmi + "type").Value == "uml:Class" ||
+                          item.Attribute(_xmi + "type").Value == "uml:Interface"
                           select item;
 
             foreach (var node in classes)
