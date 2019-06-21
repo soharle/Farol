@@ -20,17 +20,22 @@ namespace Farol.Models
 
         public int CompareTo(object obj)
         {
-            Class comparePart = (Class)obj;
+            if (obj == null) return 1;
+
+            Class comparePart = obj as Class;
+
             int difference = ItDepends.Count - comparePart.ItDepends.Count;
 
             if (difference == 0)
             {
-                return Releases.Count - comparePart.Releases.Count;
+                return comparePart.Releases.Count - Releases.Count;
             }
             else
             {
                 return difference;
             }
+
+
         }
     }
 }
