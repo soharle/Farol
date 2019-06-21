@@ -11,13 +11,27 @@ namespace Farol.Models
         public string Name { get; set; }
         public List<Class> Releases { get; set; }
         public List<Class> ItDepends { get; set; }
-        public int Fi { get; set; }
-        public int Fit { get; set; }
 
         public Class()
         {
             Releases = new List<Class>();
             ItDepends = new List<Class>();
+        }
+
+        public int CompareTo(Class comparePart)
+        {
+
+            int difference = ItDepends.Count - comparePart.ItDepends.Count;
+
+            if(difference == 0)
+            {
+                return Releases.Count - comparePart.Releases.Count;
+            }
+            else
+            {
+                return difference;
+            }
+
         }
     }
 }
