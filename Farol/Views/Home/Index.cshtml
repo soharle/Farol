@@ -1,8 +1,58 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    var orderList = ViewData["OrderList"] as List<Step>;
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <div class="text-center">
+        <h1 class="display-4">Farol</h1>
+        <hr>
+
+        <form method="post" enctype="multipart/form-data" asp-controller="Home" asp-action="UploadFile">
+            <div class="input-group mb-3">
+                <div class="custom-file">
+                    <input type="file" class="custom-file-input" name="file" id="xmiFileGroup">
+                    <label class="custom-file-label" for="xmiFileGroup" aria-describedby="xmiFileGroupAddon">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                    <input class="input-group-text" type="submit" id="xmiFileGroupAddon" value="Upload">
+                </div>
+            </div>
+        </form>
+
+
+        <table class="table table-hover">
+            <thead class="thead">
+                <tr>
+                    <td scope="col">
+                        #
+                    </td>
+                    <td scope="col">
+                        Class name
+                    </td>
+                    <td scope="col">
+                        Stubs
+                    </td>
+                    <td scope="col">
+                        Releases
+                    </td>
+                </tr>
+            </thead>
+            <tbody>
+                <orderList>
+                    @if (orderList != null)
+                    {
+                        @for (int i = 0; i < orderList.Count; i++)
+                        {
+                            <tr>
+                                <td>@i</td>
+                                <td>@orderList[i].Class.Name</td>
+                                <td>@orderList[i].getStubs()</td>
+                                <td>@orderList[i].getReleases()</td>
+                            </tr>
+                        }
+                    }
+                </orderList>
+            </tbody>
+
+        </table>
+
+    </div>

@@ -22,23 +22,23 @@ namespace Farol.Models
             List<Class> classes = Model.Classes;
 
             classes.Sort();
-            foreach(Class c in classes)
+            for(int i = 0; i < classes.Count; i++)
             {
                 Step step = new Step();
 
-                step.Class = c;
-                step.Stubs.AddRange(c.ItDepends);
-                step.Releases.AddRange(c.Releases);
+                step.Class = classes[i];
+                step.Stubs.AddRange(classes[i].ItDepends);
+                step.Releases.AddRange(classes[i].Releases);
 
-                foreach(Class d in c.Releases)
+                foreach(Class d in classes[i].Releases)
                 {
-                    d.ItDepends.Remove(c);
+                    d.ItDepends.Remove(d);
                 }
 
                 classes.Sort();
                 Order.Add(step);
-
             }
         }
+
     }
 }
